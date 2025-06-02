@@ -23,6 +23,11 @@ header {
     background-color: #161b22;
 }
 
+.logo{
+    width: 64px;
+    height: 64px;
+}
+
 .logo-container {
     display: flex;
     align-items: center;
