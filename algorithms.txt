@@ -1,0 +1,26 @@
+implemented:
+------------
+Bubble Sort
+Insertion Sort
+Selection Sort
+Merge Sort
+Quick Sort
+Heap Sort
+Shell Sort
+Bogo Sort
+
+Want to implement:
+------------------
+Counting Sort
+Radix Sort
+Bucket Sort
+IntroSort
+Cocktail Shaker Sort
+Gnome Sort
+Pigeonhole Sort
+Bitonic Sort
+Odd-Even Sort
+Sleep Sort
+Bead Sort
+Spaghetti Sort
+Smooth Sort

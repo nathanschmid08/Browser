@@ -4,8 +4,10 @@ const resultsTable = document.getElementById('results');
 const arraySize = 100;
 let array = [];
 
-function generateArray() {
-    array = Array.from({ length: arraySize }, () => Math.floor(Math.random() * 300) + 10);
+let currentArraySize = 100; // Standardgröße
+
+function generateArray(size = currentArraySize) {
+    array = Array.from({ length: size }, () => Math.floor(Math.random() * 300) + 10);
 }
 
 function render(arr, element) {
@@ -182,6 +184,28 @@ async function shellSort(arr, renderTarget) {
     renderTarget.parentElement.classList.remove('sorting');
 }
 
+async function bogoSort(arr, renderTarget) {
+    renderTarget.parentElement.classList.add('sorting');
+
+    function isSorted(a) {
+        for (let i = 0; i < a.length - 1; i++) {
+            if (a[i] > a[i + 1]) return false;
+        }
+        return true;
+    }
+
+    while (!isSorted(arr)) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        render(arr, renderTarget);
+        await new Promise(r => setTimeout(r, 50)); // langsamer, sonst zu schnell
+    }
+
+    renderTarget.parentElement.classList.remove('sorting');
+}
+
 async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'bubble') return bubbleSort(arr, renderTarget);
     if (name === 'insertion') return insertionSort(arr, renderTarget);
@@ -190,10 +214,16 @@ async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'quick') return quickSort(arr, renderTarget);
     if (name === 'heap') return heapSort(arr, renderTarget);
     if (name === 'shell') return shellSort(arr, renderTarget);
+    if (name === 'bogo') return bogoSort(arr, renderTarget);
 }
 
 async function startSort() {
     const selected = document.getElementById('algorithm').value;
+    currentArraySize = (selected === 'bogo') ? 10 : 100;  // bei Bogo nur 10 Balken
+
+    generateArray(currentArraySize);
+    render(array, container);
+
     const arrCopy = [...array];
     const start = performance.now();
     await sortAlgorithm(selected, arrCopy, container);
@@ -206,27 +236,36 @@ async function startSort() {
 async function compareSorts() {
     const selected1 = document.getElementById('algorithm').value;
     const selected2 = document.getElementById('algorithm2').value;
-    const arr1 = [...array];
-    const arr2 = [...array];
 
-    // Start both algorithms simultaneously
+    // Entscheide die Array-Größen pro Algorithmus
+    const size1 = (selected1 === 'bogo') ? 10 : 100;
+    const size2 = (selected2 === 'bogo') ? 10 : 100;
+
+    // Erstelle separate Arrays
+    const arr1 = Array.from({ length: size1 }, () => Math.floor(Math.random() * 300) + 10);
+    const arr2 = Array.from({ length: size2 }, () => Math.floor(Math.random() * 300) + 10);
+
+    render(arr1, container);
+    render(arr2, compareContainer);
+
     const start1 = performance.now();
     const promise1 = sortAlgorithm(selected1, arr1, container);
 
     const start2 = performance.now();
     const promise2 = sortAlgorithm(selected2, arr2, compareContainer);
 
-    // Wait for both to complete
     await Promise.all([promise1, promise2]);
+
     const end1 = performance.now();
     const end2 = performance.now();
 
     clearEmptyState();
     resultsTable.innerHTML += `
-    <tr><td>${selected1} (links)</td><td>${(end1 - start1).toFixed(2)}</td></tr>
-    <tr><td>${selected2} (rechts)</td><td>${(end2 - start2).toFixed(2)}</td></tr>
-  `;
+      <tr><td>${selected1} (links)</td><td>${(end1 - start1).toFixed(2)}</td></tr>
+      <tr><td>${selected2} (rechts)</td><td>${(end2 - start2).toFixed(2)}</td></tr>
+    `;
 }
+
 
 generateArray();
 render(array, container);
