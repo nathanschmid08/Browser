@@ -8,10 +8,10 @@ Quick Sort
 Heap Sort
 Shell Sort
 Bogo Sort
+Counting Sort
 
 Want to implement:
 ------------------
-Counting Sort
 Radix Sort
 Bucket Sort
 IntroSort

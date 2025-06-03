@@ -206,6 +206,33 @@ async function bogoSort(arr, renderTarget) {
     renderTarget.parentElement.classList.remove('sorting');
 }
 
+async function countingSort(arr, renderTarget) {
+    renderTarget.parentElement.classList.add('sorting');
+
+    // Max-Wert bestimmen
+    const max = Math.max(...arr);
+    const count = new Array(max + 1).fill(0);
+
+    // Schritt 1: Zählen, wie oft jedes Element vorkommt
+    for (let i = 0; i < arr.length; i++) {
+        count[arr[i]]++;
+        await new Promise(r => setTimeout(r, 2));
+    }
+
+    // Schritt 2: Array neu aufbauen aus Count-Array
+    let index = 0;
+    for (let i = 0; i < count.length; i++) {
+        while (count[i] > 0) {
+            arr[index++] = i;
+            render(arr, renderTarget);
+            await new Promise(r => setTimeout(r, 10));
+            count[i]--;
+        }
+    }
+
+    renderTarget.parentElement.classList.remove('sorting');
+}
+
 async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'bubble') return bubbleSort(arr, renderTarget);
     if (name === 'insertion') return insertionSort(arr, renderTarget);
@@ -215,6 +242,7 @@ async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'heap') return heapSort(arr, renderTarget);
     if (name === 'shell') return shellSort(arr, renderTarget);
     if (name === 'bogo') return bogoSort(arr, renderTarget);
+    if (name === 'counting') return countingSort(arr, renderTarget);
 }
 
 async function startSort() {
