@@ -206,6 +206,51 @@ async function bogoSort(arr, renderTarget) {
     renderTarget.parentElement.classList.remove('sorting');
 }
 
+async function radixSort(arr, renderTarget) {
+    renderTarget.parentElement.classList.add('sorting');
+
+    const max = Math.max(...arr);
+    let exp = 1; // Start bei den Einerstellen
+
+    while (Math.floor(max / exp) > 0) {
+        await countingSortByDigit(arr, exp, renderTarget);
+        exp *= 10;
+    }
+
+    renderTarget.parentElement.classList.remove('sorting');
+}
+
+async function countingSortByDigit(arr, exp, renderTarget) {
+    const n = arr.length;
+    const output = new Array(n).fill(0);
+    const count = new Array(10).fill(0);
+
+    // Zählen, wie oft jede Ziffer an dieser Stelle vorkommt
+    for (let i = 0; i < n; i++) {
+        const digit = Math.floor(arr[i] / exp) % 10;
+        count[digit]++;
+        await new Promise(r => setTimeout(r, 1));
+    }
+
+    // Count-Array in Positionen umwandeln
+    for (let i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Stable Sort basierend auf Ziffer
+    for (let i = n - 1; i >= 0; i--) {
+        const digit = Math.floor(arr[i] / exp) % 10;
+        output[--count[digit]] = arr[i];
+    }
+
+    // Zurück ins Original-Array schreiben
+    for (let i = 0; i < n; i++) {
+        arr[i] = output[i];
+        render(arr, renderTarget);
+        await new Promise(r => setTimeout(r, 10));
+    }
+}
+
 async function countingSort(arr, renderTarget) {
     renderTarget.parentElement.classList.add('sorting');
 
@@ -243,6 +288,7 @@ async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'shell') return shellSort(arr, renderTarget);
     if (name === 'bogo') return bogoSort(arr, renderTarget);
     if (name === 'counting') return countingSort(arr, renderTarget);
+    if (name === 'radix') return radixSort(arr, renderTarget);
 }
 
 async function startSort() {
