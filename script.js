@@ -278,6 +278,46 @@ async function countingSort(arr, renderTarget) {
     renderTarget.parentElement.classList.remove('sorting');
 }
 
+async function bucketSort(arr, renderTarget) {
+    renderTarget.parentElement.classList.add('sorting');
+
+    const n = arr.length;
+    if (n <= 0) return;
+
+    const numBuckets = Math.floor(Math.sqrt(n)); // Faustregel
+    const maxValue = Math.max(...arr);
+    const buckets = Array.from({ length: numBuckets }, () => []);
+
+    // Werte in Buckets einsortieren
+    for (let i = 0; i < n; i++) {
+        const index = Math.floor((arr[i] / (maxValue + 1)) * numBuckets);
+        buckets[index].push(arr[i]);
+    }
+
+    // Jeden Bucket sortieren (Insertion Sort)
+    for (let i = 0, k = 0; i < numBuckets; i++) {
+        const bucket = buckets[i];
+        for (let j = 1; j < bucket.length; j++) {
+            let key = bucket[j];
+            let m = j - 1;
+            while (m >= 0 && bucket[m] > key) {
+                bucket[m + 1] = bucket[m];
+                m--;
+            }
+            bucket[m + 1] = key;
+        }
+
+        // Rückübertragen ins Hauptarray mit Animation
+        for (let j = 0; j < bucket.length; j++) {
+            arr[k++] = bucket[j];
+            render(arr, renderTarget);
+            await new Promise(r => setTimeout(r, 10));
+        }
+    }
+
+    renderTarget.parentElement.classList.remove('sorting');
+}
+
 async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'bubble') return bubbleSort(arr, renderTarget);
     if (name === 'insertion') return insertionSort(arr, renderTarget);
@@ -289,6 +329,7 @@ async function sortAlgorithm(name, arr, renderTarget) {
     if (name === 'bogo') return bogoSort(arr, renderTarget);
     if (name === 'counting') return countingSort(arr, renderTarget);
     if (name === 'radix') return radixSort(arr, renderTarget);
+    if (name === 'bucket') return bucketSort(arr, renderTarget);
 }
 
 async function startSort() {
