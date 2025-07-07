@@ -1,74 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>My Electron Browser</title>
-  <style>
-    body { margin: 0; font-family: sans-serif; }
-    #navbar {
-      display: flex;
-      padding: 8px;
-      background: #222;
-      color: white;
-      align-items: center;
-    }
-    #url {
-      flex-grow: 1;
-      margin-left: 8px;
-      padding: 4px 8px;
-      font-size: 16px;
-    }
-    button {
-      margin-left: 8px;
-      padding: 6px 12px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #webview {
-      width: 100%;
-      height: calc(100vh - 48px);
-      border: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Harry Potter Wiki</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="navbar">
-    <button id="back">←</button>
-    <button id="forward">→</button>
-    <input type="text" id="url" value="https://www.google.com" />
-    <button id="go">Go</button>
-  </div>
+  <h1>Search for Magic</h1>
+  <input type="text" id="searchInput" placeholder="Enter spell name..." />
+  <button onclick="searchSpell()">Search</button>
+  <div id="result"></div>
 
-  <webview id="webview" src="https://www.google.com" partition="persist:default"></webview>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const webview = document.getElementById('webview');
-      const urlInput = document.getElementById('url');
-      const goBtn = document.getElementById('go');
-      const backBtn = document.getElementById('back');
-      const forwardBtn = document.getElementById('forward');
-
-      goBtn.addEventListener('click', () => {
-        let url = urlInput.value;
-        if (!url.startsWith('http')) {
-          url = 'https://' + url;
-        }
-        webview.src = url;
-      });
-
-      backBtn.addEventListener('click', () => {
-        webview.goBack();
-      });
-
-      forwardBtn.addEventListener('click', () => {
-        webview.goForward();
-      });
-
-      webview.addEventListener('did-navigate', (event) => {
-        urlInput.value = event.url;
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
